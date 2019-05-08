@@ -1,5 +1,39 @@
 # Python面向对象编程--PlaneWars
 
+## 代码解析
+
+### 清单
+* plane_main.py
+* plane_sprites.py
+* images文件夹：游戏中用到的图片
+
+### 环境
+Windows7 + Python3.6 + anaconda3 + pygame
+
+### 解析
+
+类：
+* PlaneGame
+   * 方法：私有方法`__create_sprites`用于创建背景和战机，声明敌机精灵组；`start_game`用于游戏循环；私有方法`__event_handler`用于获取键盘事件和定时器事件；私有方法`__check_collide`用于碰撞检测；私有方法`__update_sprites`，通过update和draw的连用来达到更新画面的效果，需要注意的是，这个函数中操作的都是精灵组；静态方法`__game_over`，结束游戏
+   * 属性：screen, clock, back_group, enemy_group, hero, hero_group
+* BackGround：要营造出战机在不断前进的状态，通过设置背景图不断下降即可。需要用两张背景连续移动。
+   * 方法：扩展了父类的update和初始化方法
+* GameSprite，是BackGround类的父类
+   * 方法：定义了update方法和初始化方法
+   * 属性：image, rect, speed
+* Hero，继承自GameSprite
+   * 方法：扩展了父类的初始化方法，重写了父类的update方法。还有自己特有的fire方法，fire方法一次发射三颗子弹：先创建子弹，然后定义子弹的位置，然后把初始化后的子弹使用add方法加入子弹精灵组中
+   * 属性：bullets，属于精灵组类型
+* Bullet，继承自GameSprite
+* Enemy，继承自GameSprite
+
+其他：
+* 精灵组。先定义精灵，然后将定义好的精灵放入精灵组中。在游戏中出现的都是精灵组。
+* 程序从main函数开始执行
+* 所谓定时器事件，就是每隔一段时间，去执行一些操作。比如私有方法`__create_sprites`，设置了创建敌机和子弹这两个定时器事件
+* 在Python OOP中，创建对象后，解释器依次调用对象的`__new__`和`__init__`；在销毁对象时，依次调用`kill`和`__del__`
+
+
 ## Python面向对象
 
 OOP的三大特性：封装，继承，多态
@@ -35,6 +69,19 @@ class child(parent)
 * 覆盖：解释器会寻找并自动调用子类的方法
 * 扩展：父类提供的功能较少，需要子类进行拓展。这里用到`super`类
 
+```
+class BackGround(GameSprite):
+
+    def update(self):
+        # 调用父类实现：垂直移动
+        super().update()
+        # 判断是否移出屏幕，如果移出，将图像设置到屏幕上方
+        if self.rect.y >= SCREEN_RECT.height:
+            self.rect.y = -self.rect.height
+```
+上面的代码中，`BackGround`类继承自父类`GameSprite`。在父类中有`update`方法，但是子类想在这个的基础上新增一些功能，所以用到`super`
+
+
 #### 子类方法和父类方法重名
 当子类对象想调用一个方法，无奈父类也有同名的方法，那么解释器会使用哪种呢？这时可以通过内置方法`__mro__`来查看。
 
@@ -59,6 +106,15 @@ class child(parent)
 
 
 ## Pygame
+在游戏设计中的几个要点：
+1. 定时器事件
+2. 碰撞检测
+3. 事件监听
+4. 游戏循环
+5. 精灵与精灵组
+
+
+
 
 
 
